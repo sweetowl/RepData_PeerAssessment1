@@ -118,7 +118,7 @@ names(steps_per_day_type) <- c("interval", "daylevel", "steps")
 ```
 
 Creating appropriate plots:
-```{r fig.width=7, fig.height=12}
+```{r fig.width=7, fig.height=20}
 library(lattice)
 xyplot(steps ~ interval | day_type, steps_per_day_type, type = "l", layout = c(1, 2), 
        xlab = "Interval", ylab = "Number of steps taken per day")
