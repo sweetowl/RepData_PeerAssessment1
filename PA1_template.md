@@ -2,7 +2,7 @@
 
 ## Loading and preprocessing the data
 
-Loading data into R (file with the data must be in a current working directory):
+Loading data into R:
 
 
 ```r
@@ -143,15 +143,8 @@ median(steps_per_day_wo_NAs$steps)
 Creating factor variable with two levels - "weekday" and "weekend":
 
 ```r
+activity$date <- as.Date(activity$date, "%Y-%m-%d")
 day <- weekdays(activity$date)
-```
-
-```
-## Error: no applicable method for 'weekdays' applied to an object of class
-## "factor"
-```
-
-```r
 day_type <- vector()
 for (i in 1:nrow(activity)) {
   if (day[i] == "Saturday") {
@@ -166,7 +159,7 @@ activity$day_type <- day_type
 activity$day_type <- factor(activity$day_type)
 
 steps_per_day_type <- aggregate(steps ~ interval + day_type, data = activity, mean)
-names(steps_per_day_type) <- c("interval", "daylevel", "steps")
+names(steps_per_day_type) <- c("interval", "day_type", "steps")
 ```
 
 Creating appropriate plots:
