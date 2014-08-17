@@ -9,14 +9,6 @@ Loading data into R (file with the data must be in a current working directory):
 activity <- read.csv("activity.csv", header=T)
 ```
 
-```
-## Warning: cannot open file 'activity.csv': No such file or directory
-```
-
-```
-## Error: cannot open the connection
-```
-
 ## What is mean total number of steps taken per day?
 
 Histogram presenting the total number of steps taken each day.
@@ -26,18 +18,12 @@ Histogram presenting the total number of steps taken each day.
 steps_per_day <- aggregate(steps ~ date, data = activity, sum)
 ```
 
-```
-## Error: object 'activity' not found
-```
-
 
 ```r
 barplot(steps_per_day$steps, names.arg = steps_per_day$date, xlab = "Date", ylab = "Number of steps per day", main="Total number of steps taken each day")
 ```
 
-```
-## Error: object 'steps_per_day' not found
-```
+![plot of chunk unnamed-chunk-3](figure/unnamed-chunk-3.png) 
 
 Mean of the total number of stpes taken per day amounts to:
 
@@ -47,7 +33,7 @@ mean(steps_per_day$steps)
 ```
 
 ```
-## Error: object 'steps_per_day' not found
+## [1] 10766
 ```
 
 Median for the total number of stpes taken per day is:
@@ -58,7 +44,7 @@ median(steps_per_day$steps)
 ```
 
 ```
-## Error: object 'steps_per_day' not found
+## [1] 10765
 ```
 
 ## What is the average daily activity pattern?
@@ -68,17 +54,11 @@ median(steps_per_day$steps)
 steps_interval <- aggregate(steps ~ interval, data = activity, mean)
 ```
 
-```
-## Error: object 'activity' not found
-```
-
 ```r
 plot(steps_interval, type = "l", xlab="Interval", ylab="Average number of steps", main="Average number of steps taken across all days")
 ```
 
-```
-## Error: object 'steps_interval' not found
-```
+![plot of chunk unnamed-chunk-7](figure/unnamed-chunk-7.png) 
 
 The maximum number of steps is taken in:
 
@@ -87,7 +67,7 @@ steps_interval$interval[which.max(steps_interval$steps)]
 ```
 
 ```
-## Error: object 'steps_interval' not found
+## [1] 835
 ```
 the 5-minute interval.
 
@@ -100,20 +80,13 @@ sum(is.na(activity))
 ```
 
 ```
-## Error: object 'activity' not found
+## [1] 2304
 ```
 
 Filling all of the missing values:
 
 ```r
 steps_average <- aggregate(steps ~ interval, data = activity, mean)
-```
-
-```
-## Error: object 'activity' not found
-```
-
-```r
 impute_miss <- numeric()
 for (i in 1:nrow(activity)) {
     case <- activity[i, ]
@@ -126,26 +99,11 @@ for (i in 1:nrow(activity)) {
 }
 ```
 
-```
-## Error: object 'activity' not found
-```
-
 Creating new dataset with the missing values filled in:
 
 ```r
 activity_filled <- activity
-```
-
-```
-## Error: object 'activity' not found
-```
-
-```r
 activity_filled$steps <- impute_miss
-```
-
-```
-## Error: object 'activity_filled' not found
 ```
 
 Histogram presenting the total number of steps taken each day after imputing missing values:
@@ -154,17 +112,11 @@ Histogram presenting the total number of steps taken each day after imputing mis
 steps_per_day_wo_NAs <- aggregate(steps ~ date, data = activity_filled, sum)
 ```
 
-```
-## Error: object 'activity_filled' not found
-```
-
 ```r
 barplot(steps_per_day_wo_NAs$steps, names.arg = steps_per_day_wo_NAs$date, xlab = "Date", ylab = "Number of steps per day", main="Total number of steps taken each day after imputing NAs")
 ```
 
-```
-## Error: object 'steps_per_day_wo_NAs' not found
-```
+![plot of chunk unnamed-chunk-13](figure/unnamed-chunk-13.png) 
 
 Mean of the total number of stpes taken per day amounts to:
 
@@ -173,7 +125,7 @@ mean(steps_per_day_wo_NAs$steps)
 ```
 
 ```
-## Error: object 'steps_per_day_wo_NAs' not found
+## [1] 10766
 ```
 
 Median for the total number of stpes taken per day is:
@@ -183,7 +135,7 @@ median(steps_per_day_wo_NAs$steps)
 ```
 
 ```
-## Error: object 'steps_per_day_wo_NAs' not found
+## [1] 10766
 ```
 
 ## Are the diferences in activity patterns between weekdays and weekends?
@@ -192,21 +144,7 @@ Creating factor variable with two levels - "weekday" and "weekend":
 
 ```r
 activity$date <- as.Date(activity$date, "%Y-%m-%d")
-```
-
-```
-## Error: object 'activity' not found
-```
-
-```r
 day <- weekdays(activity$date)
-```
-
-```
-## Error: object 'activity' not found
-```
-
-```r
 day_type <- vector()
 for (i in 1:nrow(activity)) {
   if (day[i] == "Saturday") {
@@ -217,59 +155,19 @@ for (i in 1:nrow(activity)) {
     day_type[i] <- "Weekday"
   }
 }
-```
-
-```
-## Error: object 'activity' not found
-```
-
-```r
 activity$day_type <- day_type
-```
-
-```
-## Error: object 'activity' not found
-```
-
-```r
 activity$day_type <- as.factor(activity$day_type)
-```
 
-```
-## Error: object 'activity' not found
-```
-
-```r
 steps_per_day_type <- aggregate(steps ~ interval + day_type, data = activity, mean)
-```
-
-```
-## Error: object 'activity' not found
-```
-
-```r
 names(steps_per_day_type) <- c("interval", "daylevel", "steps")
-```
-
-```
-## Error: object 'steps_per_day_type' not found
 ```
 
 Creating appropriate plots:
 
 ```r
 library(lattice)
-```
-
-```
-## Warning: package 'lattice' was built under R version 3.1.1
-```
-
-```r
 xyplot(steps ~ interval | day_type, steps_per_day_type, type = "l", layout = c(1, 2), 
        xlab = "Interval", ylab = "Number of steps taken per day")
 ```
 
-```
-## Error: object 'steps_per_day_type' not found
-```
+![plot of chunk unnamed-chunk-17](figure/unnamed-chunk-17.png) 
