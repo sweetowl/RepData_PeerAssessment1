@@ -1,0 +1,128 @@
+# Reproducible Research - Peer Assessment 1
+========================================================
+
+## Loading and preprocessing the data
+
+Loading data into R (file with the data must be in a current working directory):
+
+```{r}
+activity <- read.csv("activity.csv", header=T)
+```
+
+## What is mean total number of steps taken per day?
+
+Histogram presenting the total number of steps taken each day.
+
+```{r}
+steps_per_day <- aggregate(steps ~ date, data = activity, sum)
+```
+
+```{r fig.width=7, fig.height=6}
+barplot(steps_per_day$steps, names.arg = steps_per_day$date, xlab = "Date", ylab = "Number of steps per day", main="Total number of steps taken each day")
+```
+
+Mean of the total number of stpes taken per day amounts to `r mean(steps_per_day$steps)`.
+
+```{r results="hide"}
+mean(steps_per_day$steps)
+```
+
+Median for the total number of stpes taken per day is `r median(steps_per_day$steps)`.
+
+```{r results="hide"}
+median(steps_per_day$steps)
+```
+
+## What is the average daily activity pattern?
+
+```{r}
+steps_interval <- aggregate(steps ~ interval, data = activity, mean)
+```
+``` {r fig.width=7, fig.height=6}
+plot(steps_interval, type = "l", xlab="Interval", ylab="Average number of steps", main="Average number of steps taken across all days")
+```
+
+The maximum number of steps is taken in the `r steps_interval$interval[which.max(steps_interval$steps)]` 5-minute interval.
+
+``` {r results="hide"}
+steps_interval$interval[which.max(steps_interval$steps)]
+```
+
+## Imputing missing values
+
+Total number of rows with missing values amounts to `r sum(is.na(activity))`.
+```{r results="hide"}
+sum(is.na(activity))
+```
+
+Filling all of the missing values:
+```{r}
+steps_average <- aggregate(steps ~ interval, data = activity, mean)
+impute_miss <- numeric()
+for (i in 1:nrow(activity)) {
+    case <- activity[i, ]
+    if (is.na(case$steps)) {
+        steps <- subset(steps_average, interval == case$interval)$steps
+    } else {
+        steps <- case$steps
+    }
+    impute_miss <- c(impute_miss, steps)
+}
+```
+
+Creating new dataset with the missing values filled in:
+```{r}
+activity_filled <- activity
+activity_filled$steps <- impute_miss
+```
+
+Histogram presenting the total number of steps taken each day after imputing missing values:
+```{r}
+steps_per_day_wo_NAs <- aggregate(steps ~ date, data = activity_filled, sum)
+```
+```{r fig.width=7, fig.height=6}
+barplot(steps_per_day_wo_NAs$steps, names.arg = steps_per_day_wo_NAs$date, xlab = "Date", ylab = "Number of steps per day", main="Total number of steps taken each day after imputing NAs")
+```
+
+Mean of the total number of stpes taken per day amounts to `r mean(steps_per_day_wo_NAs$steps)`.
+
+```{r results="hide"}
+mean(steps_per_day_wo_NAs$steps)
+```
+
+Median for the total number of stpes taken per day is `r median(steps_per_day_wo_NAs$steps)`.
+
+```{r results="hide"}
+median(steps_per_day_wo_NAs$steps)
+```
+
+## Are the diferences in activity patterns between weekdays and weekends?
+
+Creating factor variable with two levels - "weekday" and "weekend":
+```{r}
+activity$date <- as.Date(activity$date, "%Y-%m-%d")
+day <- weekdays(activity$date)
+day_type <- vector()
+for (i in 1:nrow(activity)) {
+  if (day[i] == "Saturday") {
+    day_type[i] <- "Weekend"
+  } else if (day[i] == "Sunday") {
+    day_type[i] <- "Weekend"
+  } else {
+    day_type[i] <- "Weekday"
+  }
+}
+activity$day_type <- day_type
+activity$day_type <- as.factor(activity$day_type)
+
+steps_per_day_type <- aggregate(steps ~ interval + day_type, data = activity, mean)
+names(steps_per_day_type) <- c("interval", "daylevel", "steps")
+
+```
+
+Creating appropriate plots:
+```{r fig.width=7, fig.height=6}
+library(lattice)
+xyplot(steps ~ interval | day_type, steps_per_day_type, type = "l", layout = c(1, 2), 
+       xlab = "Interval", ylab = "Number of steps taken per day")
+```
